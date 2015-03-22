@@ -12,11 +12,11 @@ import requests
 
 #REMOTE_URL = 'https://km-prototype-1076374862.eu-west-1.bonsai.io/knowledge/information' #for testing
 
-REMOTE_URLcred = 'https://cp94zbqxv3:estftr8mkx@km-prototype-1076374862.eu-west-1.bonsai.io/knowledgelive/information' #for live
+# REMOTE_URLcred = 'https://cp94zbqxv3:estftr8mkx@km-prototype-1076374862.eu-west-1.bonsai.io/knowledgelive/information' #for live
 
 REMOTE_URL = 'https://km-prototype-1076374862.eu-west-1.bonsai.io/knowledgelive/information' #for live
 
-#REMOTE_URLcred = 'https://cp94zbqxv3:estftr8mkx@km-prototype-1076374862.eu-west-1.bonsai.io/knowledgetest/information'
+REMOTE_URLcred = 'https://cp94zbqxv3:estftr8mkx@km-prototype-1076374862.eu-west-1.bonsai.io/knowledge/information'
 
 USR = 'cp94zbqxv3'
 PWD = 'estftr8mkx'
@@ -49,16 +49,16 @@ def NewSearchDataOnContent(data, sort_type, page_size, page_number):
     else:
         page_from = ((page_number - 1) * page_size) + 1
     print page_from
-    
+
     if sort_type == 'score':
         payload = json.dumps({"from":page_from, "size":page_size, "query": {"match" : {"content": data}},"sort":["_score"] })
     elif sort_type == 'popularity':
         payload = json.dumps({"from":page_from, "size":page_size, "query": {"match" : {"content": data}},"sort":[{"popularity": {"order": "asc"}}] })
     elif sort_type == 'date':
-        payload = json.dumps({"from":page_from, "size":page_size, "query": {"match" : {"content": data}},"sort":[{"lastupdate": {"order": "asc"}}] })    
+        payload = json.dumps({"from":page_from, "size":page_size, "query": {"match" : {"content": data}},"sort":[{"lastupdate": {"order": "asc"}}] })
     else:
-        payload = json.dumps({"from":page_from, "size":page_size, "query": {"match" : {"content": data}},"sort":["_score"] })    
-    
+        payload = json.dumps({"from":page_from, "size":page_size, "query": {"match" : {"content": data}},"sort":["_score"] })
+
     headers = {'content-type': 'application/json'}
 
     res = requests.get(REMOTE_URLcred+'/_search', data=payload, headers=headers)
@@ -162,6 +162,15 @@ def SearchDataOnBody(data):
         flash(r.text)
         flash(r.status_code)"""
 
+def UploadContent(files):
+    try:
+        content = json.load(files)
+    except ValueError:
+        return 400
+    id_value = content["id"]
+    headers = {'content-type': 'application/json'}
+    r = requests.post(REMOTE_URLcred+'/'+id_value, data=json.dumps(content), headers=headers)
+    return r.status_code
 
 
 #SearchDataOnTitle('charge')
